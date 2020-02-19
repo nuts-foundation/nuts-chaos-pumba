@@ -1,22 +1,30 @@
 #!/bin/bash
 
-# Docker network
-docker network rm nuts-chaos
-
 # Stop containers
-docker kill discovery
-docker kill timon-init
-docker kill pumba-init
-docker kill notary-init
-docker kill notary
-docker kill timon
-docker kill pumba
+docker kill discovery > /dev/null 2>&1
+docker kill timon-init > /dev/null 2>&1
+docker kill pumba-init > /dev/null 2>&1
+docker kill notary-init > /dev/null 2>&1
+docker kill notary > /dev/null 2>&1
+docker kill timonb > /dev/null 2>&1
+docker kill pumbab > /dev/null 2>&1
+docker kill timonc > /dev/null 2>&1
+docker kill pumbac > /dev/null 2>&1
+docker kill timon > /dev/null 2>&1
+docker kill pumba > /dev/null 2>&1
 
 # remove containers
-docker container rm discovery
-docker container rm timon-init
-docker container rm notary-init
-docker container rm pumba-init
-docker container rm notary
-docker container rm timon
-docker container rm pumba
+docker container rm discovery > /dev/null 2>&1
+docker container rm timon-init > /dev/null 2>&1
+docker container rm notary-init > /dev/null 2>&1
+docker container rm pumba-init > /dev/null 2>&1
+docker container rm notary > /dev/null 2>&1
+docker container rm timonb > /dev/null 2>&1
+docker container rm pumbab > /dev/null 2>&1
+docker container rm timonc > /dev/null 2>&1
+docker container rm pumbac > /dev/null 2>&1
+docker container rm timon > /dev/null 2>&1
+docker container rm pumba > /dev/null 2>&1
+
+# Docker network
+docker network rm nuts-chaos > /dev/null 2>&1

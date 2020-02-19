@@ -1,0 +1,29 @@
+{
+  "name": "nuts-chaos-pumba",
+  "version": "1.0.0",
+  "description": "Chaos testing for Nuts",
+  "main": "index.js",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0"
+  },
+  "devDependencies": {
+    "chakram": "^1.5.0",
+    "chai": "*",
+    "mocha": "*"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuts-foundation/nuts-chaos-pumba.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nuts-foundation/nuts-chaos-pumba/issues"
+  },
+  "homepage": "https://github.com/nuts-foundation/nuts-chaos-pumba#readme"
+}
