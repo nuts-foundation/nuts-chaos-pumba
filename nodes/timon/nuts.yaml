@@ -14,4 +14,4 @@ events:
 cbridge:
   address: http://timonb:8080
 cstore:
-  connectionstring: /opt/nuts/sqlite/sqlite.db
+  connectionstring: /opt/nuts/sqlite.db
