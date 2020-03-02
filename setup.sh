@@ -10,6 +10,8 @@ timon_conf=$(pwd)/nodes/timon/node.conf
 pumba_conf=$(pwd)/nodes/pumba/node.conf
 docker run -d --name=discovery --network=nuts-chaos nutsfoundation/nuts-discovery:latest-dev
 
+sleep 10s
+
 docker run -d --name=notary-init --network=nuts-chaos -v $notary_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:latest-dev -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
 docker run -d --name=timon-init --network=nuts-chaos -v $timon_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:latest-dev -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
 docker run -d --name=pumba-init --network=nuts-chaos -v $pumba_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:latest-dev -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
@@ -30,20 +32,16 @@ docker container rm timon-init
 docker container rm pumba-init
 
 # create corda containers
-docker create -it --name notary --network=nuts-chaos \
-  --hostname=notary \
-  -v $notary_conf:/opt/nuts/node.conf \
-  chaos/notary -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console
 
 docker create -it --name timonc --network=nuts-chaos \
   -v $timon_conf:/opt/nuts/node.conf \
   --entrypoint=java \
-  chaos/timon -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console
+  chaos/timon -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --no-local-shell
 
 docker create -it --name pumbac --network=nuts-chaos \
   -v $pumba_conf:/opt/nuts/node.conf \
   --entrypoint=java \
-  chaos/pumba -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console
+  chaos/pumba -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --no-local-shell
 
 # create bridge containers
 timon_props=$(pwd)/nodes/timon/application.properties
