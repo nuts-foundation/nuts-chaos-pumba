@@ -61,10 +61,12 @@ pumba_yaml=$(pwd)/nodes/pumba/nuts.yaml
 
 docker create -it --name timon --network=nuts-chaos \
   -e NUTS_CONFIGFILE=/opt/nuts/nuts.yaml \
+  -p 11323:1323 \
   -v $timon_yaml:/opt/nuts/nuts.yaml \
   nutsfoundation/nuts-service-space:latest
 
 docker create -it --name pumba --network=nuts-chaos \
   -e NUTS_CONFIGFILE=/opt/nuts/nuts.yaml \
+  -p 21323:1323 \
   -v $pumba_yaml:/opt/nuts/nuts.yaml \
   nutsfoundation/nuts-service-space:latest

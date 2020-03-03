@@ -25,3 +25,14 @@ First start the containers:
 ./start.sh
 ```
 
+Then run tests
+
+```shell script
+mocha test --exit
+```
+
+or 
+
+```shell script
+npm test --exit
+```
