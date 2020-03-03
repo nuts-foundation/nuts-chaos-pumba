@@ -3,6 +3,8 @@
 # create discovery service
 docker start discovery
 
+sleep 10s
+
 docker start notary
 docker start pumbac
 docker start timonc

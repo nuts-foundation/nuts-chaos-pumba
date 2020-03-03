@@ -28,3 +28,6 @@ docker container rm pumba > /dev/null 2>&1
 
 # Docker network
 docker network rm nuts-chaos > /dev/null 2>&1
+
+# Discovery files
+rm nodes/discovery/*
