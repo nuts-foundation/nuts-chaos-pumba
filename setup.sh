@@ -77,7 +77,7 @@ docker create --name timon --network=nuts-chaos \
   -p 11323:1323 \
   -v $timon_yaml:/opt/nuts/nuts.yaml \
   -v $timon_keys:/opt/nuts/keys \
-  -v $registry:/opt/nuts/data \
+  -v $registry:/opt/nuts/registry \
   nutsfoundation/nuts-service-space:latest
 
 docker create --name pumba --network=nuts-chaos \
@@ -85,7 +85,7 @@ docker create --name pumba --network=nuts-chaos \
   -p 21323:1323 \
   -v $pumba_yaml:/opt/nuts/nuts.yaml \
   -v $pumba_keys:/opt/nuts/keys \
-  -v $registry:/opt/nuts/data \
+  -v $registry:/opt/nuts/registry \
   nutsfoundation/nuts-service-space:latest
 
 # notary setup
