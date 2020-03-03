@@ -1,0 +1,17 @@
+{
+  "type": "VendorClaimEvent",
+  "issuedAt": "2020-03-03T13:20:49.7439516Z",
+  "payload": {
+    "orgIdentifier": "urn:oid:2.16.840.1.113883.2.4.6.1:2",
+    "orgKeys": [
+      {
+        "e": "AQAB",
+        "kty": "RSA",
+        "n": "xiV10wn_BtiCrW-oOHXqQ9lu-SvauIUl-sIgnU3-vGquyXJNf5xVEAZbDIpa2cYBVNMRPezxTgiYYV-eFR3vYhvRswX9s4tvEvy_DhSM7DM11ARwBTGhs1p0NsD-vVrCiz0Bq65E4xSok543_Tsj9wyuHfHrjAY-Q8_8IjZLGbYrvfX5Lt1aOm9lVIZ2mInArMUFvfAOfxyNQwVp95nCLj37xnLiQBPI7X8HgChV08dinONLbXUbPoionLjgNmJW81AVhSkIbHfvdfEkoaDAwKjQPxu7IIbK2LzOd4vzjv4b0NcOLVdwhKT1lGN431V99DZj7_t60m0kuLnwdI5Yuw"
+      }
+    ],
+    "orgName": "Pumba homecare",
+    "start": "2020-03-03T13:20:49.7439374Z",
+    "vendorIdentifier": "urn:oid:1.3.6.1.4.1.54851.4:2"
+  }
+}

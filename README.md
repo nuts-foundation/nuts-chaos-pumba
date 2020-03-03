@@ -1,6 +1,13 @@
 # nuts-chaos-pumba
 Chaos testing for Nuts
 
+## Install dependencies
+
+(todo, elaborate)
+ - install nodejs
+ - npm install mocha
+ - install pumba 
+
 ## setup
 
 run
@@ -8,7 +15,7 @@ run
 ./setup.sh
 ```
 
-This will create all containers and also initialize everything with the correct keys/network setup.
+This will create all containers and also initialize everything with the correct keys/network setup. It'll also add organisations and vendors.
 
 ## clean
 

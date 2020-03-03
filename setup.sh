@@ -58,15 +58,55 @@ docker create -it --name pumbab --network=nuts-chaos \
 # create service containers
 timon_yaml=$(pwd)/nodes/timon/nuts.yaml
 pumba_yaml=$(pwd)/nodes/pumba/nuts.yaml
+timon_keys=$(pwd)/nodes/timon/keys
+pumba_keys=$(pwd)/nodes/pumba/keys
+registry=$(pwd)/nodes/registry
 
 docker create -it --name timon --network=nuts-chaos \
   -e NUTS_CONFIGFILE=/opt/nuts/nuts.yaml \
   -p 11323:1323 \
   -v $timon_yaml:/opt/nuts/nuts.yaml \
+  -v $timon_keys:/opt/nuts/keys \
+  -v $registry:/opt/nuts/data \
   nutsfoundation/nuts-service-space:latest
 
 docker create -it --name pumba --network=nuts-chaos \
   -e NUTS_CONFIGFILE=/opt/nuts/nuts.yaml \
   -p 21323:1323 \
   -v $pumba_yaml:/opt/nuts/nuts.yaml \
+  -v $pumba_keys:/opt/nuts/keys \
+  -v $registry:/opt/nuts/data \
   nutsfoundation/nuts-service-space:latest
+
+# notary setup
+# destroys itself
+docker run -d -it --name notary --network=nuts-chaos \
+  --hostname=notary \
+  -v $notary_conf:/opt/nuts/node.conf \
+  chaos/notary -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --no-local-shell
+
+# wait for container
+sleep 60s
+docker kill notary
+
+# commit
+docker commit notary chaos/notary
+docker container rm notary
+
+# rewrite corda containers to remove network-params
+docker run -d -it --name notary --network=nuts-chaos \
+  --entrypoint=/bin/bash \
+  chaos/notary
+
+sleep 20s
+
+docker exec -it notary rm /opt/nuts/network-parameters
+docker kill notary
+docker commit notary chaos/notary
+docker container rm notary
+
+# recreate notary
+docker create -it --name notary --network=nuts-chaos \
+  -v $notary_conf:/opt/nuts/node.conf \
+  --entrypoint=java \
+  chaos/notary -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --no-local-shell

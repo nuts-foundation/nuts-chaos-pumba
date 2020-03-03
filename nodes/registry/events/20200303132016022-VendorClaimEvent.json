@@ -1,0 +1,17 @@
+{
+  "type": "VendorClaimEvent",
+  "issuedAt": "2020-03-03T13:20:16.0227693Z",
+  "payload": {
+    "orgIdentifier": "urn:oid:2.16.840.1.113883.2.4.6.1:1",
+    "orgKeys": [
+      {
+        "e": "AQAB",
+        "kty": "RSA",
+        "n": "vLs3ZdkNlkAP2etfnvKiMys70NVwnBFDPND_Ibuk-RwXOY8X-VYa9qwA0X64zXAUMbMKELs5WjiHMAdhyS1KeXEG7WjSVVPNdvNfg5ajdle9s1e0W1JF57hnlsj-27utMaGyfuJn6OeMQoDwWh2jJVNAEF_2RjtFwEnsvBr_dNcQ0aBpkiRdeRG-7HnjuytOhjjrPQfiKvScXiO2G0aNKmszE1FR856Rv4PLRM-m2ZqqwN9-OPHqJ-W1FvcUj2NJ71XlZlWf3dK2mrhvDC52EY5m6HXwn8cLu2NzOABPEVRoIFtoYympq6J7bUZPxT_RSMbRW5kuEbhZjUPfcsC4ew"
+      }
+    ],
+    "orgName": "Timon homecare",
+    "start": "2020-03-03T13:20:16.0227561Z",
+    "vendorIdentifier": "urn:oid:1.3.6.1.4.1.54851.4:1"
+  }
+}

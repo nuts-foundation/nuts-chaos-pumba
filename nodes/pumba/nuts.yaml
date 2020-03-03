@@ -5,6 +5,7 @@ auth:
   publicUrl: https://example.org
   irmaConfigPath: /opt/nuts/irma
   enableCORS: true
+  skipAutoUpdateIrmaSchemas: true
 crypto:
   fspath: /opt/nuts/keys
 registry:
