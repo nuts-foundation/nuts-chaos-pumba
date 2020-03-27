@@ -5,6 +5,8 @@ let chai = require('chai'),
     should = chai.should();
 let chaiHttp = require('chai-http');
 
+require("isomorphic-fetch")
+
 chai.use(chaiHttp);
 
 function pauseContainer(container) {
@@ -57,12 +59,65 @@ function submitConsent(patientId) {
         });
 }
 
-function waitForOk(patientId, done) {
+async function endConsent(patientId) {
+    //console.log(`submitting consent for ${patientId}`)
+    var endDate = new Date()
+    endDate.setDate(endDate.getDate() - 1)
+
+    // query current consent
+    var resp = fetch('http://localhost:11323/consent/query', {
+        method: "POST",
+        body: JSON.stringify({
+            subject: `urn:oid:2.16.840.1.113883.2.4.6.3:${patientId}`,
+            custodian: "urn:oid:2.16.840.1.113883.2.4.6.1:1",
+            actor: "urn:oid:2.16.840.1.113883.2.4.6.1:2"
+        })
+    }).then(response => response.json()
+    ).catch(error => {
+        console.error(error);
+    });
+
+    var currentConsent = await resp;
+    var previousRecordHash = currentConsent.results[0].records[0].recordHash
+
+    data = {
+        subject: `urn:oid:2.16.840.1.113883.2.4.6.3:${patientId}`,
+        custodian: "urn:oid:2.16.840.1.113883.2.4.6.1:1",
+        actor: "urn:oid:2.16.840.1.113883.2.4.6.1:2",
+        records: [
+            {
+                consentProof: {
+                    ID: `UUID-${patientId}`,
+                    title: "someproof.pdf",
+                    contentType: "application/pdf",
+                    hash: `hash-${patientId}`
+                },
+                previousRecordHash: previousRecordHash,
+                period: {
+                    "start": "2020-01-01T12:00:00+02:00",
+                    "end": endDate.toISOString()
+                },
+                dataClass: [
+                    "urn:oid:1.3.6.1.4.1.54851.1:MEDICAL"
+                ]
+            }
+        ]
+    }
+
+    chai.request('http://localhost:11323')
+        .post('/api/consent')
+        .set('Content-Type', 'application/json')
+        .send(data)
+        .then( (res) => {
+            //console.log(`status ${res.status} for ending consent, body: ${JSON.stringify(res.body)}`)
+    });
+}
+
+function waitForConsentValue(patientId, expectedValue, done) {
     //console.log(`checking consent for ${patientId}`)
 
-    let attemptsLeft = 10;
-    const expectedValue = 'yes';
-    const delayBetweenRequest = 10000;
+    let attemptsLeft = 100;
+    const delayBetweenRequest = 1000;
     var result = 'unknown'
 
     function check() {
@@ -119,14 +174,14 @@ describe("Node status", () => {
     });
 });
 
-function containerTest(container, patientId, done) {
+function containerTest(container, patientId, test, consentValue, done) {
     pauseContainer(container);
 
     // submit consent request
-    submitConsent(patientId);
+    test(patientId);
 
     // poll otherside
-    waitForOk(patientId, done);
+    waitForConsentValue(patientId, consentValue, done);
 }
 
 describe("Record consent", () => {
@@ -137,7 +192,21 @@ describe("Record consent", () => {
         // pause container
         describe("transfers consent to the other side when pausing " + item, () => {
             it("works" + item, (done) => {
-                containerTest(item, currentPatient++, done);
+                containerTest(item, currentPatient++, submitConsent, 'yes', done);
+            }).timeout(120000);
+        });
+    });
+});
+
+describe("End consent", () => {
+    var currentPatient = 0;
+    var containers = ["timonb", "timonc", "pumba", "pumbab", "pumbac", "notary"];
+
+    containers.forEach( (item) => {
+        // pause container
+        describe("transfers consent to the other side when pausing " + item, () => {
+            it("works" + item, (done) => {
+                containerTest(item, currentPatient++, endConsent, 'no', done);
             }).timeout(120000);
         });
     });
