@@ -10,6 +10,10 @@ timon_conf=$(pwd)/nodes/timon/node.conf
 pumba_conf=$(pwd)/nodes/pumba/node.conf
 discovery_db=$(pwd)/nodes/discovery
 
+c_d_tag=latest-dev
+b_d_tag=latest-dev
+s_d_tag=latest
+
 echo "Starting discovery service"
 docker run -d --name=discovery --network=nuts-chaos \
   -e SPRING_DATASOURCE_URL=jdbc:h2:file:/opt/nuts/data/discovery \
@@ -19,7 +23,7 @@ docker run -d --name=discovery --network=nuts-chaos \
 sleep 10s
 
 echo "Running initial registration for 3 corda nodes"
-docker run -d --name=notary-init --network=nuts-chaos -v $notary_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:latest-dev java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
+docker run -d --name=notary-init --network=nuts-chaos -v $notary_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:$c_d_tag java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
 docker run -d --name=timon-init --network=nuts-chaos -v $timon_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:latest-dev java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
 docker run -d --name=pumba-init --network=nuts-chaos -v $pumba_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:latest-dev java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
 
@@ -56,11 +60,11 @@ pumba_props=$(pwd)/nodes/pumba/application.properties
 echo "Creating 2 bridge containers"
 docker create --name timonb --network=nuts-chaos \
   -v $timon_props:/opt/nuts/application.properties \
-  nutsfoundation/nuts-consent-bridge:latest-dev
+  nutsfoundation/nuts-consent-bridge:$b_d_tag
 
 docker create --name pumbab --network=nuts-chaos \
   -v $pumba_props:/opt/nuts/application.properties \
-  nutsfoundation/nuts-consent-bridge:latest-dev
+  nutsfoundation/nuts-consent-bridge:$b_d_tag
 
 # create service containers
 timon_yaml=$(pwd)/nodes/timon/nuts.yaml
@@ -76,7 +80,7 @@ docker create --name timon --network=nuts-chaos \
   -v $timon_yaml:/opt/nuts/nuts.yaml \
   -v $timon_keys:/opt/nuts/keys \
   -v $registry:/opt/nuts/registry \
-  nutsfoundation/nuts-service-space:latest
+  nutsfoundation/nuts-service-space:$s_d_tag
 
 docker create --name pumba --network=nuts-chaos \
   -e NUTS_CONFIGFILE=/opt/nuts/nuts.yaml \
@@ -84,7 +88,7 @@ docker create --name pumba --network=nuts-chaos \
   -v $pumba_yaml:/opt/nuts/nuts.yaml \
   -v $pumba_keys:/opt/nuts/keys \
   -v $registry:/opt/nuts/registry \
-  nutsfoundation/nuts-service-space:latest
+  nutsfoundation/nuts-service-space:$s_d_tag
 
 # notary setup
 # destroys itself
