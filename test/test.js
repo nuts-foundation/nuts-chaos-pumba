@@ -9,20 +9,25 @@ require("isomorphic-fetch")
 
 chai.use(chaiHttp);
 
-function pauseContainer(container) {
-    var cmd = `pumba pause --duration 10s ${container}`
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-    // 30 and 61 seconds to test
+async function stopContainer(container) {
+    //var cmd = `pumba pause --duration 150s ${container}`
+    cmd = `docker stop ${container}`
+    return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            resolve(stdout ? stdout : stderr);
+        });
+    });
+}
+
+async function startContainer(container) {
+    cmd = `docker start ${container}`
 
     return new Promise((resolve, reject) => {
         exec(cmd, (error, stdout, stderr) => {
-            if (error) {
-                console.log(`error: ${error.message}`);
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
-            }
-            console.log(`stdout: ${stdout}`);
             resolve(stdout ? stdout : stderr);
         });
     });
@@ -117,7 +122,7 @@ function waitForConsentValue(patientId, expectedValue, done) {
     //console.log(`checking consent for ${patientId}`)
 
     let attemptsLeft = 100;
-    const delayBetweenRequest = 1000;
+    const delayBetweenRequest = 3000;
     var result = 'unknown'
 
     function check() {
@@ -157,7 +162,7 @@ function waitForConsentValue(patientId, expectedValue, done) {
         }
         setTimeout(c, 100)
     })
-    waitForHello(100000).then( () => {
+    waitForHello(300000).then( () => {
         result.should.eql('SUCCESS')
         done()
     });
@@ -174,11 +179,18 @@ describe("Node status", () => {
     });
 });
 
-function containerTest(container, patientId, test, consentValue, done) {
-    pauseContainer(container);
+async function containerTest(container, patientId, test, consentValue, done) {
+    stopContainer(container);
+
+    await new Promise(r => setTimeout(r, 125000));
 
     // submit consent request
     test(patientId);
+
+    startContainer(container);
+
+    // problem with polling below if pumba gets restarted, give it 10 seconds
+    await new Promise(r => setTimeout(r, 10000));
 
     // poll otherside
     waitForConsentValue(patientId, consentValue, done);
@@ -189,11 +201,10 @@ describe("Record consent", () => {
     var containers = ["timonb", "timonc", "pumba", "pumbab", "pumbac", "notary"];
 
     containers.forEach( (item) => {
-        // pause container
-        describe("transfers consent to the other side when pausing " + item, () => {
+        describe("transfers consent to the other side when stopping/starting " + item, () => {
             it("works" + item, (done) => {
                 containerTest(item, currentPatient++, submitConsent, 'yes', done);
-            }).timeout(120000);
+            }).timeout(300000);
         });
     });
 });
@@ -207,7 +218,7 @@ describe("End consent", () => {
         describe("transfers consent to the other side when pausing " + item, () => {
             it("works" + item, (done) => {
                 containerTest(item, currentPatient++, endConsent, 'no', done);
-            }).timeout(120000);
+            }).timeout(300000);
         });
     });
 });
