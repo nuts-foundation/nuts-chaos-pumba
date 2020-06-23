@@ -10,9 +10,9 @@ timon_conf=$(pwd)/nodes/timon/node.conf
 pumba_conf=$(pwd)/nodes/pumba/node.conf
 discovery_db=$(pwd)/nodes/discovery
 
-c_d_tag=latest-dev
-b_d_tag=latest-dev
-s_d_tag=latest
+c_d_tag=release-0.14.0
+b_d_tag=release-0.14.0-dev
+s_d_tag=release-0.14.1
 
 echo "Starting discovery service"
 docker run -d --name=discovery --network=nuts-chaos \
@@ -24,8 +24,8 @@ sleep 10s
 
 echo "Running initial registration for 3 corda nodes"
 docker run -d --name=notary-init --network=nuts-chaos -v $notary_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:$c_d_tag java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
-docker run -d --name=timon-init --network=nuts-chaos -v $timon_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:latest-dev java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
-docker run -d --name=pumba-init --network=nuts-chaos -v $pumba_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:latest-dev java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
+docker run -d --name=timon-init --network=nuts-chaos -v $timon_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:$c_d_tag java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
+docker run -d --name=pumba-init --network=nuts-chaos -v $pumba_conf:/opt/nuts/node.conf nutsfoundation/nuts-consent-cordapp:$c_d_tag java -jar /opt/nuts/corda.jar --network-root-truststore-password=changeit --log-to-console --initial-registration
 
 # wait for containers to complete
 docker wait notary-init
